@@ -1,13 +1,18 @@
 {
-    "name": "nicmart/tree",
+    "name": "matejlauko/tree",
     "type": "library",
-    "description": "A basic but flexible php tree data structure and a fluent tree builder implementation.",
+    "description": "A basic but flexible php tree data structure and a fluent tree builder implementation. Fork nicmart/Tree",
+    "homepage": "https://github.com/matejlauko/Tree",
     "keywords": [],
     "license": "MIT",
     "authors": [
         {
             "name": "Nicolò Martini",
             "email": "nicmartnic@gmail.com"
+        },
+        {
+            "name": "Matej Lauko",
+            "email": "lauko.m@gmail.com"
         }
     ],
     "require": {
