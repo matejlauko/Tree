@@ -11,9 +11,16 @@
 namespace Tree\Node;
 
 use Tree\Visitor\Visitor;
+use Tree\Exception\IdExistsException;
 
 trait NodeTrait
 {
+
+	/**
+	 * @var int
+	 */
+	private $id = 0;
+
     /**
      * @var mixed
      */
@@ -35,12 +42,81 @@ trait NodeTrait
     /**
      * @param mixed $value
      * @param array[NodeInterface] $children
+	 * @param int|null $id
      */
-    public function __construct($value = null, array $children = [])
+    public function __construct($value = null, array $children = [], $id = null)
     {
+		$this->setId($id);
         $this->setValue($value);
         $this->setChildren($children);
     }
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function getId()
+	{
+		return $this->id;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function setId($id = null)
+	{
+		if ($id && $this->idExists($id)) {
+			$id = null;
+		}
+
+		if (!$id) {
+			$id = $this->getLastId() + 1;
+		}
+
+		$this->id = $id;
+
+		return $this;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	private function getLastId()
+	{
+		$root = $this->root();
+		$lastId = $root->getId();
+
+		/** @var NodeInterface $child */
+		foreach ($root->getChildren() as $child) {
+			$lastId = ($child->getId() > $lastId && $child !== $this) ? $child->getId() : $lastId;
+		}
+
+		return $lastId;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	private function idExists($id)
+	{
+		return in_array($id, $this->getIdsArray());
+	}
+
+	/**
+	 * @return array
+	 */
+	private function getIdsArray()
+	{
+		$root = $this->root();
+
+		$idsArray = [$root->getId()];
+
+		/** @var NodeInterface $child */
+		foreach ($root->getChildren() as $child) {
+			array_push($idsArray, $child->getId());
+		}
+
+		return $idsArray;
+	}
 
     /**
      * {@inheritdoc}
@@ -128,6 +204,7 @@ trait NodeTrait
     public function setParent(NodeInterface $parent = null)
     {
         $this->parent = $parent;
+		$this->setId();
     }
 
     /**

@@ -16,9 +16,26 @@ use Tree\Visitor\Visitor;
  *
  * @package    Tree
  * @author     Nicolò Martini <nicmartnic@gmail.com>
+ * @author     Matej Lauko <lauko.m@gmail.com>
  */
 interface NodeInterface
 {
+
+	/**
+	 * Returns the id of the node
+	 *
+	 * @return int
+	 */
+	public function getId();
+
+	/**
+	 * Sets the id for node
+	 *
+	 * @param int|null $id
+	 * @return NodeInterface the current instance
+	 */
+	public function setId($id = null);
+
     /**
      * Set the value of the current node
      *
@@ -153,6 +170,17 @@ interface NodeInterface
      * @return int
      */
     public function getHeight();
+
+	/**
+	 * @return int
+	 */
+	function getLastId();
+
+	/**
+	 * @param int $id
+	 * @return bool
+	 */
+	function idExists($id);
 
     /**
      * Accept method for the visitor pattern (see http://en.wikipedia.org/wiki/Visitor_pattern)

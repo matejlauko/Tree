@@ -9,6 +9,7 @@
  */
 namespace Tree\Test\Tree;
 
+use Tree\Exception\IdExistsException;
 use Tree\Node\Node;
 
 /**
@@ -257,4 +258,56 @@ class NodeTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(2, $root->getHeight());
         $this->assertEquals(1, $child3->getHeight());
     }
+
+	public function testAutomaticIdSetting()
+	{
+		$root = new Node;
+		$child = new Node;
+
+		$root->addChild($child);
+
+		$this->assertEquals(1, $root->getId());
+		$this->assertEquals(2, $child->getId());
+	}
+
+	public function testIdSetter()
+	{
+		$node1 = new Node(null, [], 2);
+		$node2 = new Node(null, [], 5);
+		$node3 = (new Node())->setId(10);
+
+		$this->assertEquals(2, $node1->getId());
+		$this->assertEquals(5, $node2->getId());
+		$this->assertEquals(10, $node3->getId());
+	}
+
+	public function testParentIdSetter()
+	{
+		$child = new Node();
+		$root = new Node();
+
+		$child->setParent($root);
+
+		$this->assertEquals(1, $root->getId());
+		$this->assertEquals(2, $child->getId());
+	}
+
+	public function testIdExists()
+	{
+		$root = (new Node())->setId(10);
+		$child = new Node();
+		$child->setParent($root);
+		$child->setId(10);
+
+		$root2 = (new Node())->setId(10);
+		$child2 = new Node();
+		$root2->setChildren([$child2]);
+		$child2->setId(10);
+
+		$this->assertEquals(10, $root->getId());
+		$this->assertEquals(11, $child->getId());
+
+		$this->assertEquals(10, $root2->getId());
+		$this->assertEquals(11, $child2->getId());
+	}
 }
