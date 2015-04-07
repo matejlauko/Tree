@@ -1,16 +1,11 @@
-# Tree [![Packagist](https://img.shields.io/packagist/dt/nicmart/tree.svg)]() [![Packagist](https://img.shields.io/packagist/dm/nicmart/tree.svg)]() [![Build Status](https://travis-ci.org/nicmart/Tree.png?branch=master)](https://travis-ci.org/nicmart/Tree)
+# Tree
+
+This is a fork of nicmart/tree php tree structure. It is used for personal projects.
 
 In Tree you can find a basic but flexible tree data structure for php together with and an handful Builder class, that enables you to build tree in a fluent way.
 
-## Changelog
- - 0.2.5 New getDepth and getHeight methods ([Issue 9](https://github.com/nicmart/Tree/issues/9))
- - 0.2.4 New accessor methods  ([PR 6](https://github.com/nicmart/Tree/pull/6), thanks to [mdwheele](https://github.com/mdwheele))
- - 0.2.3 Node::getAncestors now does not return the current node ([Issue 4](https://github.com/nicmart/Tree/issues/4))
- - 0.2.2 Fixed a bug in the builder ([Issue 3](https://github.com/nicmart/Tree/issues/3))
- - 0.2.1 root() and isRoot() methods
- - 0.2.0 Dropped php 5.3 support. Node implemented as a trait.
- - 0.1.2 Added YieldVisitor, to get the yield of the tree
- - 0.1.1 Parent and neighbors methods (thanks to https://github.com/jdeniau)
+This package adds a Tree container which encapsulates the Nodes.
+
 
 ## The tree data structure
 The `Tree\Node\NodeInterface` interface abstracts the concept of a tree node. In `Tree` a Node has essentially two things: 
@@ -191,34 +186,6 @@ For example, if `$node` is the tree builded above, then
  $yield = $node->accept($visitor);
  // $yield will contain nodes B, G, H, E, F
  ```
-
-## Install
-
-The best way to install Tree is [through composer](http://getcomposer.org).
-
-Just create a composer.json file for your project:
-
-```JSON
-{
-    "require": {
-        "nicmart/tree": "~0.2"
-    }
-}
-```
-
-Then you can run these two commands to install it:
-
-    $ curl -s http://getcomposer.org/installer | php
-    $ php composer.phar install
-
-or simply run `composer install` if you have have already [installed the composer globally](http://getcomposer.org/doc/00-intro.md#globally).
-
-Then you can include the autoloader, and you will have access to the library classes:
-
-```php
-<?php
-require 'vendor/autoload.php';
-```
 
 # Tests
 ```
