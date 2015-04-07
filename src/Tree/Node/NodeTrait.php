@@ -1,17 +1,14 @@
 <?php
 /**
  * This file is part of Tree
- *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
  * @author Nicolò Martini <nicmartnic@gmail.com>
  */
 
 namespace Tree\Node;
 
 use Tree\Visitor\Visitor;
-use Tree\Exception\IdExistsException;
 
 trait NodeTrait
 {
@@ -21,35 +18,34 @@ trait NodeTrait
 	 */
 	private $id = 0;
 
-    /**
-     * @var mixed
-     */
-    private $value;
+	/**
+	 * @var mixed
+	 */
+	private $value;
 
-    /**
-     * parent
-     *
-     * @var NodeInterface
-     * @access private
-     */
-    private $parent;
+	/**
+	 * parent
+	 * @var NodeInterface
+	 * @access private
+	 */
+	private $parent;
 
-    /**
-     * @var array[NodeInterface]
-     */
-    private $children = [];
+	/**
+	 * @var array[NodeInterface]
+	 */
+	private $children = [];
 
-    /**
-     * @param mixed $value
-     * @param array[NodeInterface] $children
+	/**
+	 * @param mixed    $value
+	 * @param          array [NodeInterface] $children
 	 * @param int|null $id
-     */
-    public function __construct($value = null, array $children = [], $id = null)
-    {
+	 */
+	public function __construct($value = null, array $children = [], $id = null)
+	{
 		$this->setId($id);
-        $this->setValue($value);
-        $this->setChildren($children);
-    }
+		$this->setValue($value);
+		$this->setChildren($children);
+	}
 
 	/**
 	 * {@inheritdoc}
@@ -64,15 +60,16 @@ trait NodeTrait
 	 */
 	public function setId($id = null)
 	{
-		if ($id && $this->idExists($id)) {
-			$id = null;
-		}
-
-		if (!$id) {
-			$id = $this->getLastId() + 1;
-		}
-
 		$this->id = $id;
+		return $this;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function setValue($value)
+	{
+		$this->value = $value;
 
 		return $this;
 	}
@@ -80,277 +77,247 @@ trait NodeTrait
 	/**
 	 * {@inheritdoc}
 	 */
-	private function getLastId()
+	public function getValue()
 	{
-		$root = $this->root();
-		$lastId = $root->getId();
-
-		/** @var NodeInterface $child */
-		foreach ($root->getChildren() as $child) {
-			$lastId = ($child->getId() > $lastId && $child !== $this) ? $child->getId() : $lastId;
-		}
-
-		return $lastId;
+		return $this->value;
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
-	private function idExists($id)
+	public function addChild(NodeInterface $child)
 	{
-		return in_array($id, $this->getIdsArray());
+		$child->setParent($this);
+		$this->children[] = $child;
+
+		return $this;
 	}
 
 	/**
-	 * @return array
+	 * {@inheritdoc}
 	 */
-	private function getIdsArray()
+	public function removeChild(NodeInterface $child)
 	{
-		$root = $this->root();
-
-		$idsArray = [$root->getId()];
-
-		/** @var NodeInterface $child */
-		foreach ($root->getChildren() as $child) {
-			array_push($idsArray, $child->getId());
+		foreach ($this->children as $key => $myChild) {
+			if ($child == $myChild) {
+				unset($this->children[$key]);
+			}
 		}
 
-		return $idsArray;
+		$this->children = array_values($this->children);
+
+		$child->setParent(null);
+
+		return $this;
 	}
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setValue($value)
-    {
-        $this->value = $value;
+	/**
+	 * {@inheritdoc}
+	 */
+	public function removeAllChildren()
+	{
+		$this->setChildren([]);
 
-        return $this;
-    }
+		return $this;
+	}
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getValue()
-    {
-        return $this->value;
-    }
+	/**
+	 * {@inheritdoc}
+	 */
+	public function getChildren()
+	{
+		return $this->children;
+	}
 
-    /**
-     * {@inheritdoc}
-     */
-    public function addChild(NodeInterface $child)
-    {
-        $child->setParent($this);
-        $this->children[] = $child;
+	/**
+	 * {@inheritdoc}
+	 */
+	public function setChildren(array $children)
+	{
+		$this->removeParentFromChildren();
+		$this->children = [];
 
-        return $this;
-    }
+		foreach ($children as $child) {
+			$this->addChild($child);
+		}
 
-    /**
-     * {@inheritdoc}
-     */
-    public function removeChild(NodeInterface $child)
-    {
-        foreach ($this->children as $key => $myChild) {
-            if ($child == $myChild) {
-                unset($this->children[$key]);
-            }
-        }
+		return $this;
+	}
 
-        $this->children = array_values($this->children);
+	/**
+	 * {@inheritdoc}
+	 */
+	public function setParent(NodeInterface $parent = null)
+	{
+		$this->parent = $parent;
+	}
 
-        $child->setParent(null);
+	/**
+	 * {@inheritdoc}
+	 */
+	public function getParent()
+	{
+		return $this->parent;
+	}
 
-        return $this;
-    }
+	/**
+	 * {@inheritdoc}
+	 */
+	public function getAncestors()
+	{
+		$parents = [];
+		$node = $this;
+		while ($parent = $node->getParent()) {
+			array_unshift($parents, $parent);
+			$node = $parent;
+		}
 
-    /**
-     * {@inheritdoc}
-     */
-    public function removeAllChildren()
-    {
-        $this->setChildren([]);
+		return $parents;
+	}
 
-        return $this;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	public function getAncestorsAndSelf()
+	{
+		return array_merge($this->getAncestors(), [$this]);
+	}
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getChildren()
-    {
-        return $this->children;
-    }
+	/**
+	 * {@inheritdoc}
+	 */
+	public function getNeighbors()
+	{
+		$neighbors = $this->getParent()->getChildren();
+		$current = $this;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setChildren(array $children)
-    {
-        $this->removeParentFromChildren();
-        $this->children = [];
+		// Uses array_values to reset indexes after filter.
+		return array_values(
+			array_filter(
+				$neighbors,
+				function ($item) use ($current) {
+					return $item != $current;
+				}
+			)
+		);
+	}
 
-        foreach ($children as $child) {
-            $this->addChild($child);
-        }
+	/**
+	 * {@inheritDoc}
+	 */
+	public function getNeighborsAndSelf()
+	{
+		return $this->getParent()->getChildren();
+	}
 
-        return $this;
-    }
+	/**
+	 * {@inheritdoc}
+	 */
+	public function getDescendants()
+	{
+		$descendants = [];
+		/** @var NodeInterface $childNode */
+		foreach ($this->getChildren() as $childNode) {
+			$descendants[] = $childNode;
+			if (!$childNode->isLeaf()) {
+				$descendants = array_merge($descendants, $childNode->getDescendants());
+			}
+		}
+		return $descendants;
+	}
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setParent(NodeInterface $parent = null)
-    {
-        $this->parent = $parent;
-		$this->setId();
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	public function getDescendantsAndSelf()
+	{
+		return array_merge([$this], $this->getDescendants());
+	}
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getParent()
-    {
-        return $this->parent;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	public function isLeaf()
+	{
+		return count($this->children) === 0;
+	}
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getAncestors()
-    {
-        $parents = [];
-        $node = $this;
-        while ($parent = $node->getParent()) {
-            array_unshift($parents, $parent);
-            $node = $parent;
-        }
+	/**
+	 * @return bool
+	 */
+	public function isRoot()
+	{
+		return $this->getParent() === null;
+	}
 
-        return $parents;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	public function isChild()
+	{
+		return $this->getParent() !== null;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getAncestorsAndSelf()
-    {
-        return array_merge($this->getAncestors(), [$this]);
-    }
+	/**
+	 * Find the root of the node
+	 * @return NodeInterface
+	 */
+	public function root()
+	{
+		$node = $this;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getNeighbors()
-    {
-        $neighbors = $this->getParent()->getChildren();
-        $current = $this;
+		while ($parent = $node->getParent()) {
+			$node = $parent;
+		}
 
-        // Uses array_values to reset indexes after filter.
-        return array_values(
-            array_filter(
-                $neighbors,
-                function ($item) use ($current) {
-                    return $item != $current;
-                }
-            )
-        );
-    }
+		return $node;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getNeighborsAndSelf()
-    {
-        return $this->getParent()->getChildren();
-    }
+	/**
+	 * Return the distance from the current node to the root.
+	 * Warning, can be expensive, since each descendant is visited
+	 * @return int
+	 */
+	public function getDepth()
+	{
+		if ($this->isRoot()) {
+			return 0;
+		}
 
-    /**
-     * {@inheritDoc}
-     */
-    public function isLeaf()
-    {
-        return count($this->children) === 0;
-    }
+		return $this->getParent()->getDepth() + 1;
+	}
 
-    /**
-     * @return bool
-     */
-    public function isRoot()
-    {
-        return $this->getParent() === null;
-    }
+	/**
+	 * Return the height of the tree whose root is this node
+	 * @return int
+	 */
+	public function getHeight()
+	{
+		if ($this->isLeaf()) {
+			return 0;
+		}
 
-    /**
-     * {@inheritDoc}
-     */
-    public function isChild()
-    {
-        return $this->getParent() !== null;
-    }
+		$heights = [];
 
-    /**
-     * Find the root of the node
-     *
-     * @return NodeInterface
-     */
-    public function root()
-    {
-        $node = $this;
+		foreach ($this->getChildren() as $child) {
+			$heights[] = $child->getHeight();
+		}
 
-        while ($parent = $node->getParent())
-            $node = $parent;
+		return max($heights) + 1;
+	}
 
-        return $node;
-    }
+	/**
+	 * {@inheritdoc}
+	 */
+	public function accept(Visitor $visitor)
+	{
+		return $visitor->visit($this);
+	}
 
-    /**
-     * Return the distance from the current node to the root.
-     *
-     * Warning, can be expensive, since each descendant is visited
-     *
-     * @return int
-     */
-    public function getDepth()
-    {
-        if ($this->isRoot()) {
-            return 0;
-        }
-
-        return $this->getParent()->getDepth() + 1;
-    }
-
-    /**
-     * Return the height of the tree whose root is this node
-     *
-     * @return int
-     */
-    public function getHeight()
-    {
-        if ($this->isLeaf()) {
-            return 0;
-        }
-
-        $heights = [];
-
-        foreach ($this->getChildren() as $child) {
-            $heights[] = $child->getHeight();
-        }
-
-        return max($heights) + 1;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function accept(Visitor $visitor)
-    {
-        return $visitor->visit($this);
-    }
-
-    private function removeParentFromChildren()
-    {
-        foreach ($this->getChildren() as $child)
-            $child->setParent(null);
-    }
+	private function removeParentFromChildren()
+	{
+		foreach ($this->getChildren() as $child) {
+			$child->setParent(null);
+		}
+	}
 } 

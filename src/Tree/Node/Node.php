@@ -15,5 +15,6 @@ namespace Tree\Node;
  */
 class Node implements NodeInterface
 {
-    use NodeTrait;
+
+	use NodeTrait;
 }

@@ -13,7 +13,6 @@ use Tree\Visitor\Visitor;
 
 /**
  * Interface for tree nodes
- *
  * @package    Tree
  * @author     Nicolò Martini <nicmartnic@gmail.com>
  * @author     Matej Lauko <lauko.m@gmail.com>
@@ -23,170 +22,146 @@ interface NodeInterface
 
 	/**
 	 * Returns the id of the node
-	 *
 	 * @return int
 	 */
 	public function getId();
 
 	/**
 	 * Sets the id for node
-	 *
 	 * @param int|null $id
 	 * @return NodeInterface the current instance
 	 */
 	public function setId($id = null);
 
-    /**
-     * Set the value of the current node
-     *
-     * @param mixed $value
-     *
-     * @return NodeInterface the current instance
-     */
-    public function setValue($value);
-
-    /**
-     * Get the current node value
-     *
-     * @return mixed
-     */
-    public function getValue();
-
-    /**
-     * Add a child
-     *
-     * @param NodeInterface $child
-     *
-     * @return mixed
-     */
-    public function addChild(NodeInterface $child);
-
-    /**
-     * Remove a node from children
-     *
-     * @param NodeInterface $child
-     *
-     * @return NodeInterface the current instance
-     */
-    public function removeChild(NodeInterface $child);
-
-    /**
-     * Remove all children
-     *
-     * @return NodeInterface The current instance
-     */
-    public function removeAllChildren();
-
-    /**
-     * Return the array of children
-     *
-     * @return array[NodeInterface]
-     */
-    public function getChildren();
-
-    /**
-     * Replace the children set with the given one
-     *
-     * @param array[NodeInterface] $children
-     *
-     * @return mixed
-     */
-    public function setChildren(array $children);
-
-    /**
-     * setParent
-     *
-     * @param NodeInterface $parent
-     * @return void
-     */
-    public function setParent(NodeInterface $parent = null);
-
-    /**
-     * getParent
-     *
-     * @return NodeInterface
-     */
-    public function getParent();
-
-    /**
-     * Retrieves all ancestors of node excluding current node.
-     *
-     * @return array
-     */
-    public function getAncestors();
-
-    /**
-     * Retrieves all ancestors of node as well as the node itself.
-     *
-     * @return Node[]
-     */
-    public function getAncestorsAndSelf();
-
-    /**
-     * Retrieves all neighboring nodes, excluding the current node.
-     *
-     * @return array
-     */
-    public function getNeighbors();
-
-    /**
-     * Returns all neighboring nodes, including the current node.
-     *
-     * @return Node[]
-     */
-    public function getNeighborsAndSelf();
-
-    /**
-     * Return true if the node is the root, false otherwise
-     *
-     * @return bool
-     */
-    public function isRoot();
-
-    /**
-     * Return true if the node is a child, false otherwise.
-     *
-     * @return bool
-     */
-    public function isChild();
-
-    /**
-     * Return true if the node has no children, false otherwise
-     *
-     * @return bool
-     */
-    public function isLeaf();
-
-    /**
-     * Return the distance from the current node to the root
-     *
-     * @return int
-     */
-    public function getDepth();
-
-    /**
-     * Return the height of the tree whose root is this node
-     *
-     * @return int
-     */
-    public function getHeight();
-
 	/**
-	 * @return int
+	 * Set the value of the current node
+	 * @param mixed $value
+	 * @return NodeInterface the current instance
 	 */
-	function getLastId();
+	public function setValue($value);
 
 	/**
-	 * @param int $id
+	 * Get the current node value
+	 * @return mixed
+	 */
+	public function getValue();
+
+	/**
+	 * Add a child
+	 * @param NodeInterface $child
+	 * @return mixed
+	 */
+	public function addChild(NodeInterface $child);
+
+	/**
+	 * Remove a node from children
+	 * @param NodeInterface $child
+	 * @return NodeInterface the current instance
+	 */
+	public function removeChild(NodeInterface $child);
+
+	/**
+	 * Remove all children
+	 * @return NodeInterface The current instance
+	 */
+	public function removeAllChildren();
+
+	/**
+	 * Return the array of children
+	 * @return array[NodeInterface]
+	 */
+	public function getChildren();
+
+	/**
+	 * Replace the children set with the given one
+	 * @param array [NodeInterface] $children
+	 * @return mixed
+	 */
+	public function setChildren(array $children);
+
+	/**
+	 * setParent
+	 * @param NodeInterface $parent
+	 * @return void
+	 */
+	public function setParent(NodeInterface $parent = null);
+
+	/**
+	 * getParent
+	 * @return NodeInterface
+	 */
+	public function getParent();
+
+	/**
+	 * Retrieves all ancestors of node excluding current node.
+	 * @return array
+	 */
+	public function getAncestors();
+
+	/**
+	 * Retrieves all ancestors of node as well as the node itself.
+	 * @return Node[]
+	 */
+	public function getAncestorsAndSelf();
+
+	/**
+	 * Retrieves all neighboring nodes, excluding the current node.
+	 * @return array
+	 */
+	public function getNeighbors();
+
+	/**
+	 * Returns all neighboring nodes, including the current node.
+	 * @return Node[]
+	 */
+	public function getNeighborsAndSelf();
+
+	/**
+	 * Returns all descendants of node
+	 * @return Node[]
+	 */
+	public function getDescendants();
+
+	/**
+	 * Returns all descendants of node including self
+	 * @return Node[]
+	 */
+	public function getDescendantsAndSelf();
+
+	/**
+	 * Return true if the node is the root, false otherwise
 	 * @return bool
 	 */
-	function idExists($id);
+	public function isRoot();
 
-    /**
-     * Accept method for the visitor pattern (see http://en.wikipedia.org/wiki/Visitor_pattern)
-     *
-     * @param Visitor $visitor
-     * @return void
-     */
-    public function accept(Visitor $visitor);
+	/**
+	 * Return true if the node is a child, false otherwise.
+	 * @return bool
+	 */
+	public function isChild();
+
+	/**
+	 * Return true if the node has no children, false otherwise
+	 * @return bool
+	 */
+	public function isLeaf();
+
+	/**
+	 * Return the distance from the current node to the root
+	 * @return int
+	 */
+	public function getDepth();
+
+	/**
+	 * Return the height of the tree whose root is this node
+	 * @return int
+	 */
+	public function getHeight();
+
+	/**
+	 * Accept method for the visitor pattern (see http://en.wikipedia.org/wiki/Visitor_pattern)
+	 * @param Visitor $visitor
+	 * @return void
+	 */
+	public function accept(Visitor $visitor);
 }
