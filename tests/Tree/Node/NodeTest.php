@@ -35,6 +35,18 @@ class NodeTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($object, $node->getValue());
     }
 
+    public function testSetProperties()
+    {
+        $node = new Node(null, [], null, ['a' => 1, 'b' => 2]);
+
+		$node2 = new Node();
+
+        $node2->setProperties(['c' => 3, 'd' => 4]);
+
+        $this->assertEquals(['a' => 1, 'b' => 2], $node->getProperties());
+        $this->assertEquals(['c' => 3, 'd' => 4], $node2->getProperties());
+    }
+
     public function testAddAndGetChildren()
     {
         $root = new Node;

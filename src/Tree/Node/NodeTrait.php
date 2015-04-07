@@ -16,7 +16,7 @@ trait NodeTrait
 	/**
 	 * @var int
 	 */
-	private $id = 0;
+	private $id = null;
 
 	/**
 	 * @var mixed
@@ -36,14 +36,21 @@ trait NodeTrait
 	private $children = [];
 
 	/**
+	 * @var array
+	 */
+	private $properties = [];
+
+	/**
 	 * @param mixed    $value
 	 * @param          array [NodeInterface] $children
+	 * @param array    $properties
 	 * @param int|null $id
 	 */
-	public function __construct($value = null, array $children = [], $id = null)
+	public function __construct($value = null, array $children = [], $id = null, $properties = [])
 	{
 		$this->setId($id);
 		$this->setValue($value);
+		$this->setProperties($properties);
 		$this->setChildren($children);
 	}
 
@@ -80,6 +87,24 @@ trait NodeTrait
 	public function getValue()
 	{
 		return $this->value;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function setProperties(array $properties = [])
+	{
+		$this->properties = $properties;
+
+		return $this;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function getProperties()
+	{
+		return $this->properties;
 	}
 
 	/**
@@ -319,5 +344,22 @@ trait NodeTrait
 		foreach ($this->getChildren() as $child) {
 			$child->setParent(null);
 		}
+	}
+
+	/**
+	 * @param string $name
+	 *
+	 * @throws \RuntimeException
+	 *
+	 * @return mixed
+	 */
+	public function __get($name)
+	{
+		if (array_key_exists($name, $this->properties)) {
+			return $this->properties[$name];
+		}
+		throw new \RuntimeException(
+			"Undefined property: $name (Node ID: ".$this->getId().')'
+		);
 	}
 } 

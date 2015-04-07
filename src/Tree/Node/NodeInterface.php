@@ -47,6 +47,19 @@ interface NodeInterface
 	public function getValue();
 
 	/**
+	 * Sets array of parameters for node
+	 * @param array $properties
+	 * @return NodeInterface
+	 */
+	public function setProperties(array $properties = []);
+
+	/**
+	 * Returns parameters set for node
+	 * @return array
+	 */
+	public function getProperties();
+
+	/**
 	 * Add a child
 	 * @param NodeInterface $child
 	 * @return mixed
