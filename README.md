@@ -1,4 +1,4 @@
-# Tree
+# Tree [![Build Status](https://travis-ci.org/matejlauko/Tree.svg?branch=master)](https://travis-ci.org/matejlauko/Tree)
 
 This is a fork of nicmart/tree php tree structure. It is used for personal projects.
 
